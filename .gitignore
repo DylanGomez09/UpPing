@@ -1,0 +1,27 @@
+# Entorno Virtual
+venv/
+env/
+ENV/
+.venv/
+
+# Variables de entorno (¡nunca subir credenciales!)
+.env
+
+# Archivos temporales y de caché de Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Base de datos local (si se crea algún archivo de log o sqlite temporal)
+*.sqlite3
+*.db
+
+# Configuración de editores
+.vscode/
+.idea/
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
