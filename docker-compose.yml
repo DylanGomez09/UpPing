@@ -8,9 +8,34 @@ services:
       POSTGRES_PASSWORD: postgrespassword
       POSTGRES_DB: app_db
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build: .
+    container_name: uppping_api
+    restart: always
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql+asyncpg://postgres:postgrespassword@db:5432/app_db
+      JWT_SECRET: cambiar-este-secret-en-produccion
+      JWT_ALGORITHM: HS256
+      JWT_EXPIRATION: 30
+      REFRESH_TOKEN_EXPIRATION_DAYS: 30
+      CORS_ORIGINS: '["http://localhost:3000"]'
+      LOGIN_MAX_ATTEMPTS: 5
+      LOGIN_WINDOW_SECONDS: 60
+    depends_on:
+      db:
+        condition: service_healthy
+    command: sh -c "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8000"
 
 volumes:
   postgres_data:
